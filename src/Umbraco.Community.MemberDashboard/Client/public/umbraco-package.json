@@ -1,0 +1,14 @@
+{
+  "id": "Umbraco.Community.MemberDashboard",
+  "name": "Member Dashboard",
+  "version": "0.1.0",
+  "allowTelemetry": true,
+  "extensions": [
+    {
+      "name": "Member Dashboard Bundle",
+      "alias": "MemberDashboard.Bundle",
+      "type": "bundle",
+      "js": "/App_Plugins/MemberDashboard/member-dashboard.js"
+    }
+  ]
+}

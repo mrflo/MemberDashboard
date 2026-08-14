@@ -1,0 +1,87 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <StaticWebAssetBasePath>/</StaticWebAssetBasePath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Umbraco.Community.MemberDashboard</PackageId>
+    <Product>Umbraco.Community.MemberDashboard</Product>
+    <Title>Member Dashboard for Umbraco</Title>
+    <Version>0.1.0</Version>
+    <Authors>Umbraco.Community.MemberDashboard contributors</Authors>
+    <Description>A backoffice dashboard for managing Umbraco members in bulk: filter by member group and approval/lockout status, sort and page through the whole member base, unlock / approve / unapprove / delete many members at once, and edit a member in a side panel.</Description>
+    <PackageTags>umbraco umbraco-marketplace members member-management backoffice dashboard</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/umbraco-community/MemberDashboard</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/umbraco-community/MemberDashboard</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+
+  <!-- Central package management - no versions -->
+  <ItemGroup>
+    <PackageReference Include="Umbraco.Cms.Api.Common" />
+    <PackageReference Include="Umbraco.Cms.Api.Management" />
+    <PackageReference Include="Umbraco.Cms.Web.Common" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" />
+
+    <!--
+      Microsoft.AspNetCore.OpenApi is available transitively from the Umbraco packages above, but we
+      take a direct dependency here because extension code directly uses types from this package
+      (IOpenApiDocumentTransformer, IOpenApiOperationTransformer, etc.) and from Microsoft.OpenApi
+      (OpenApiInfo). Without a direct reference, this project's Microsoft.AspNetCore.OpenApi version
+      is determined solely by NuGet's transitive resolution, which can resolve to a different version
+      than the host site project (e.g. a newer patch). When that happens, the different
+      Microsoft.OpenApi versions can conflict at runtime, causing custom OpenAPI documents registered
+      by the extension to fail to appear.
+      Most other transitive dependencies don't have this problem because extension code doesn't use
+      their types directly - only Microsoft.AspNetCore.OpenApi / Microsoft.OpenApi types are
+      referenced in the composer.
+    -->
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ClientAssetsInputs Include="Client\**" Exclude="$(DefaultItemExcludes);Client\node_modules\**" />
+
+    <!-- Don't include the client folder as part of packaging nuget build -->
+    <Content Remove="Client\**" />
+
+    <!-- However make the Umbraco-package.json included for dotnet pack or nuget package and visible to the solution -->
+    <None Include="Client\public\umbraco-package.json" Pack="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <!--
+    Build the TypeScript client as part of `dotnet build` / `dotnet pack`, so a consumer cloning the repo
+    only needs the .NET SDK and Node on PATH. Set -p:SkipClientBuild=true to skip (e.g. in a container
+    without Node, when wwwroot/App_Plugins is already populated).
+  -->
+  <Target Name="RestoreClient" Condition="'$(SkipClientBuild)' != 'true'" Inputs="Client\package.json;Client\package-lock.json" Outputs="Client\node_modules\.package-lock.json">
+    <Message Importance="high" Text="Restoring Client NPM packages..." />
+    <Exec Command="npm install" WorkingDirectory="Client" />
+  </Target>
+
+  <Target Name="BuildClient" Condition="'$(SkipClientBuild)' != 'true'" BeforeTargets="AssignTargetPaths" DependsOnTargets="RestoreClient" Inputs="@(ClientAssetsInputs)" Outputs="$(IntermediateOutputPath)client.complete.txt">
+    <Message Importance="high" Text="Executing Client NPM build script..." />
+    <Exec Command="npm run build" WorkingDirectory="Client" />
+    <ItemGroup>
+      <_ClientAssetsBuildOutput Include="wwwroot\App_Plugins\**" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(IntermediateOutputPath)client.complete.txt" Lines="@(_ClientAssetsBuildOutput)" Overwrite="true" />
+  </Target>
+
+</Project>

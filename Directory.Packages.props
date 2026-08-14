@@ -1,0 +1,29 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <!-- Allow floating versions so the extension can align with the host Umbraco project's package versions -->
+    <CentralPackageFloatingVersionsEnabled>true</CentralPackageFloatingVersionsEnabled>
+    <!--
+      Default must match UmbracoAppLocalIcuVersion in MemberDashboard.Demo.csproj. Defined here too because this file
+      is imported before the main project's own PropertyGroup runs, so under CPM the PackageVersion below needs
+      its own fallback to stay in sync with the RuntimeHostConfigurationOption value set from the same property.
+    -->
+    <UmbracoAppLocalIcuVersion Condition="'$(UmbracoAppLocalIcuVersion)' == ''">72.1.0.3</UmbracoAppLocalIcuVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Consumed by the demo site -->
+    <PackageVersion Include="Umbraco.Cms" Version="18.1.0" />
+    <PackageVersion Include="Umbraco.Cms.DevelopmentMode.Backoffice" Version="18.1.0" />
+    <PackageVersion Include="Microsoft.ICU.ICU4C.Runtime" Version="$(UmbracoAppLocalIcuVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Consumed by the extension package -->
+    <PackageVersion Include="Umbraco.Cms.Api.Common" Version="18.1.0" />
+    <PackageVersion Include="Umbraco.Cms.Api.Management" Version="18.1.0" />
+    <PackageVersion Include="Umbraco.Cms.Web.Common" Version="18.1.0" />
+    <PackageVersion Include="Umbraco.Cms.Web.Website" Version="18.1.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
+  </ItemGroup>
+</Project>

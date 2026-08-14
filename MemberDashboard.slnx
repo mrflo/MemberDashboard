@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/demo/">
+    <Project Path="demo/MemberDashboard.Demo/MemberDashboard.Demo.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Umbraco.Community.MemberDashboard/Umbraco.Community.MemberDashboard.csproj" />
+  </Folder>
+</Solution>

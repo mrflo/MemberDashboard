@@ -1,0 +1,9 @@
+# Normalise line endings so contributors on different platforms don't produce whole-file diffs.
+# (This repo's checkout would otherwise pick up CRLF from a global core.autocrlf setting.)
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.nupkg binary
