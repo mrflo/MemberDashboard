@@ -8,10 +8,10 @@ import type { UmbMemberDashboardCollectionFilterModel } from "./types.js";
 type TriState = "" | "true" | "false";
 
 /**
- * The group and status filters that Umbraco's own member collection does not offer.
+ * Additional filters for the member dashboard.
  *
- * Slots into `umb-collection-toolbar` alongside the built-in free-text filter field, so the
- * dashboard keeps the stock collection layout and just gains extra controls.
+ * The free-text filter is the same filter used by Umbraco's
+ * built-in collection toolbar.
  */
 @customElement("member-dashboard-filters")
 export class UmbMemberDashboardFiltersElement extends UmbLitElement {
@@ -36,12 +36,11 @@ export class UmbMemberDashboardFiltersElement extends UmbLitElement {
     this.consumeContext(UMB_COLLECTION_CONTEXT, (context) => {
       this.#collectionContext = context as unknown as UmbMemberDashboardCollectionContext;
 
-      // Keep the controls in step with the filter even when it is changed elsewhere —
-      // the table's sort headers and the Clear button both write to the same filter.
       this.observe(
         this.#collectionContext.filter,
         (filter) => {
           const current = filter as UmbMemberDashboardCollectionFilterModel;
+
           this._selectedGroup = current.memberGroupName ?? "";
           this._approved = toTriState(current.isApproved);
           this._lockedOut = toTriState(current.isLockedOut);
@@ -57,8 +56,11 @@ export class UmbMemberDashboardFiltersElement extends UmbLitElement {
   }
 
   async #loadMemberGroups() {
-    // There is no server-side search for member groups, so we ask for the full list once.
-    const { data } = await this.#memberGroupRepository.requestCollection({ skip: 0, take: 500 });
+    const { data } = await this.#memberGroupRepository.requestCollection({
+      skip: 0,
+      take: 500,
+    });
+
     this._groupNames = (data?.items ?? [])
       .map((item) => item.name)
       .filter((name): name is string => !!name)
@@ -66,22 +68,35 @@ export class UmbMemberDashboardFiltersElement extends UmbLitElement {
   }
 
   get #hasActiveFilter(): boolean {
-    return !!this._selectedGroup || this._approved !== "" || this._lockedOut !== "";
+    return (
+      !!this._selectedGroup ||
+      this._approved !== "" ||
+      this._lockedOut !== ""
+    );
   }
 
   #onGroupChange(event: Event) {
     const value = (event.target as HTMLSelectElement).value;
-    this.#collectionContext?.applyFilter({ memberGroupName: value || undefined });
+
+    this.#collectionContext?.applyFilter({
+      memberGroupName: value || undefined,
+    });
   }
 
   #onApprovedChange(event: Event) {
     const value = (event.target as HTMLSelectElement).value as TriState;
-    this.#collectionContext?.applyFilter({ isApproved: fromTriState(value) });
+
+    this.#collectionContext?.applyFilter({
+      isApproved: fromTriState(value),
+    });
   }
 
   #onLockedOutChange(event: Event) {
     const value = (event.target as HTMLSelectElement).value as TriState;
-    this.#collectionContext?.applyFilter({ isLockedOut: fromTriState(value) });
+
+    this.#collectionContext?.applyFilter({
+      isLockedOut: fromTriState(value),
+    });
   }
 
   #onClear() {
@@ -91,6 +106,15 @@ export class UmbMemberDashboardFiltersElement extends UmbLitElement {
   override render() {
     return html`
       <div id="filters">
+
+        <!--
+          Umbraco's built-in collection filter.
+
+          This is intentionally the same component used by the
+          standard collection toolbar rather than a custom uui-input.
+        -->
+        <umb-collection-filter-field></umb-collection-filter-field>
+
         <uui-select
           label=${this.localize.term("memberDashboard_filterGroupLabel")}
           .value=${this._selectedGroup}
@@ -156,12 +180,14 @@ export class UmbMemberDashboardFiltersElement extends UmbLitElement {
         ></uui-select>
 
         ${this.#hasActiveFilter
-          ? html`<uui-button
+          ? html`
+            <uui-button
               compact
               look="secondary"
               label=${this.localize.term("memberDashboard_clearFilters")}
               @click=${this.#onClear}
-            ></uui-button>`
+            ></uui-button>
+          `
           : nothing}
       </div>
     `;
@@ -176,6 +202,11 @@ export class UmbMemberDashboardFiltersElement extends UmbLitElement {
         flex-wrap: wrap;
       }
 
+      umb-collection-filter-field {
+        flex: 1 1 250px;
+        min-width: 250px;
+      }
+
       uui-select {
         min-width: 150px;
       }
@@ -183,7 +214,7 @@ export class UmbMemberDashboardFiltersElement extends UmbLitElement {
   ];
 }
 
-/** `undefined` means "don't filter on this at all", which is distinct from `false`. */
+/** `undefined` means "don't filter on this at all". */
 function toTriState(value: boolean | undefined): TriState {
   if (value === true) return "true";
   if (value === false) return "false";
