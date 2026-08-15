@@ -21,7 +21,7 @@ export interface UmbMemberDashboardCollectionFilterModel extends UmbCollectionFi
 
 /**
  * One row in the dashboard table. Flattened from `MemberResponseModel` so the table view does not
- * have to dig through `variants` for the name and created date.
+ * have to dig through `variants` for the name.
  */
 export interface UmbMemberDashboardCollectionItemModel {
   unique: string;
@@ -29,6 +29,7 @@ export interface UmbMemberDashboardCollectionItemModel {
   name: string;
   email: string;
   username: string;
+  /** Group names, already resolved by the data source — not keys. */
   groups: Array<string>;
   isApproved: boolean;
   isLockedOut: boolean;

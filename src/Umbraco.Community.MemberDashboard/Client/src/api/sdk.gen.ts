@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { PostBulkData, PostBulkErrors, PostBulkResponses } from './types.gen';
+import type { PostBulkData, PostBulkErrors, PostBulkResponses, PostDetailsData, PostDetailsErrors, PostDetailsResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -21,6 +21,16 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 export const postBulk = <ThrowOnError extends boolean = false>(options: Options<PostBulkData, ThrowOnError>) => (options.client ?? client).post<PostBulkResponses, PostBulkErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/umbraco/member-dashboard/api/v1/bulk',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+export const postDetails = <ThrowOnError extends boolean = false>(options: Options<PostDetailsData, ThrowOnError>) => (options.client ?? client).post<PostDetailsResponses, PostDetailsErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/umbraco/member-dashboard/api/v1/details',
     ...options,
     headers: {
         'Content-Type': 'application/json',

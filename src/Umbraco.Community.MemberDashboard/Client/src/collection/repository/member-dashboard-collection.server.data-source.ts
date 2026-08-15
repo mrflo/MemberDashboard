@@ -3,6 +3,7 @@ import type { UmbCollectionDataSource } from "@umbraco-cms/backoffice/collection
 import { UMB_MEMBER_ENTITY_TYPE } from "@umbraco-cms/backoffice/member";
 import { DirectionModel, MemberService } from "@umbraco-cms/backoffice/external/backend-api";
 import { tryExecute } from "@umbraco-cms/backoffice/resources";
+import { postDetails } from "../../api/index.js";
 import type {
   UmbMemberDashboardCollectionFilterModel,
   UmbMemberDashboardCollectionItemModel,
@@ -53,9 +54,14 @@ export class UmbMemberDashboardCollectionServerDataSource
       return { data: { items: [], total: 0 } };
     }
 
+    // `filter/member` returns every member with `groups: []` and a default `createDate` of
+    // 0001-01-01, so those two have to come from this package's own endpoint.
+    const details = await this.#getDetails(data.items.map((item) => item.id));
+
     const items: Array<UmbMemberDashboardCollectionItemModel> = data.items.map((item) => {
-      // Members are invariant, so there is exactly one variant carrying the name and dates.
+      // Members are invariant, so there is exactly one variant carrying the name.
       const variant = item.variants?.[0];
+      const detail = details.get(item.id);
 
       return {
         unique: item.id,
@@ -63,18 +69,40 @@ export class UmbMemberDashboardCollectionServerDataSource
         name: variant?.name || item.username,
         email: item.email,
         username: item.username,
-        groups: item.groups ?? [],
+        groups: detail?.groups ?? [],
         isApproved: item.isApproved,
         isLockedOut: item.isLockedOut,
         isTwoFactorEnabled: item.isTwoFactorEnabled,
         failedPasswordAttempts: item.failedPasswordAttempts,
         lastLoginDate: item.lastLoginDate ?? null,
         lastLockoutDate: item.lastLockoutDate ?? null,
-        createDate: variant?.createDate ?? null,
+        createDate: detail?.createDate ?? null,
         memberTypeIcon: item.memberType?.icon ?? null,
       };
     });
 
     return { data: { items, total: data.total } };
+  }
+
+  /**
+   * Resolves the group names and creation dates for one page of members.
+   *
+   * A failure here leaves those two columns blank rather than failing the whole listing, which is
+   * the better trade: the collection is still usable without them.
+   */
+  async #getDetails(memberIds: Array<string>) {
+    const details = new Map<string, { groups: Array<string>; createDate: string }>();
+
+    if (!memberIds.length) {
+      return details;
+    }
+
+    const { data } = await tryExecute(this.#host, postDetails({ body: { memberIds } }));
+
+    data?.forEach((detail) =>
+      details.set(detail.id, { groups: detail.groups, createDate: detail.createDate }),
+    );
+
+    return details;
   }
 }

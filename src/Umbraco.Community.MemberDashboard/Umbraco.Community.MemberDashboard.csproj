@@ -16,8 +16,8 @@
     <PackageTags>umbraco umbraco-marketplace members member-management backoffice dashboard</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageProjectUrl>https://github.com/umbraco-community/MemberDashboard</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/umbraco-community/MemberDashboard</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/mrflo/MemberDashboard</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mrflo/MemberDashboard</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>

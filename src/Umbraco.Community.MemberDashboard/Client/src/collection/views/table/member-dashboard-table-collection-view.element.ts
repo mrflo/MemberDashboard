@@ -9,7 +9,6 @@ import type {
   UmbTableItem,
 } from "@umbraco-cms/backoffice/components";
 import { umbOpenModal } from "@umbraco-cms/backoffice/modal";
-import { UmbMemberGroupItemRepository } from "@umbraco-cms/backoffice/member-group";
 import { MEMBER_EDIT_MODAL } from "../../../edit/member-edit-modal.token.js";
 import type { UmbMemberDashboardCollectionContext } from "../../member-dashboard-collection.context.js";
 import type { UmbMemberDashboardCollectionItemModel } from "../../types.js";
@@ -29,13 +28,6 @@ const COLUMN_TO_ORDER_BY: Record<string, string> = {
 @customElement("member-dashboard-table-collection-view")
 export class UmbMemberDashboardTableCollectionViewElement extends UmbLitElement {
   #collectionContext?: UmbMemberDashboardCollectionContext;
-  #memberGroupItemRepository = new UmbMemberGroupItemRepository(this);
-
-  /**
-   * A member's `groups` are group keys, not names, so they have to be resolved before they can be
-   * shown. Cached across pages because the same handful of groups recurs on every row.
-   */
-  #groupNamesByUnique = new Map<string, string>();
 
   @state()
   private _tableItems: Array<UmbTableItem> = [];
@@ -98,9 +90,7 @@ export class UmbMemberDashboardTableCollectionViewElement extends UmbLitElement 
     });
   }
 
-  async #createTableItems(members: Array<UmbMemberDashboardCollectionItemModel>) {
-    await this.#resolveGroupNames(members);
-
+  #createTableItems(members: Array<UmbMemberDashboardCollectionItemModel>) {
     this._tableItems = members.map((member) => ({
       id: member.unique,
       icon: member.memberTypeIcon || "icon-user",
@@ -123,10 +113,7 @@ export class UmbMemberDashboardTableCollectionViewElement extends UmbLitElement 
           value: member.groups.length
             ? html`<div class="tags">
                 ${member.groups.map(
-                  (group) =>
-                    html`<uui-tag look="secondary">
-                      ${this.#groupNamesByUnique.get(group) ?? group}
-                    </uui-tag>`,
+                  (group) => html`<uui-tag look="secondary">${group}</uui-tag>`,
                 )}
               </div>`
             : nothing,
@@ -156,19 +143,6 @@ export class UmbMemberDashboardTableCollectionViewElement extends UmbLitElement 
         },
       ],
     }));
-  }
-
-  async #resolveGroupNames(members: Array<UmbMemberDashboardCollectionItemModel>) {
-    const unknown = [
-      ...new Set(
-        members.flatMap((member) => member.groups).filter((unique) => !this.#groupNamesByUnique.has(unique)),
-      ),
-    ];
-
-    if (!unknown.length) return;
-
-    const { data } = await this.#memberGroupItemRepository.requestItems(unknown);
-    data?.forEach((item) => this.#groupNamesByUnique.set(item.unique, item.name));
   }
 
   /**

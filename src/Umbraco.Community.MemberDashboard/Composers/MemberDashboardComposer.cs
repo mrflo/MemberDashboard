@@ -32,7 +32,7 @@ public class MemberDashboardComposer : IComposer
                     options.AddDocumentTransformer((doc, _, _) =>
                     {
                         doc.Info.Version = "1.0";
-                        doc.Info.Description = "Bulk member operations for the Umbraco Member Dashboard package.";
+                        doc.Info.Description = "Bulk member operations and member listing details for the Umbraco Member Dashboard package.";
                         return Task.CompletedTask;
                     })));
     }

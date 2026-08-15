@@ -11,7 +11,7 @@ You need:
 - Node 24+ — the repo has an `.nvmrc`, so `nvm use` picks the right version
 
 ```bash
-git clone https://github.com/umbraco-community/MemberDashboard.git
+git clone https://github.com/mrflo/MemberDashboard.git
 cd MemberDashboard
 nvm use
 dotnet build

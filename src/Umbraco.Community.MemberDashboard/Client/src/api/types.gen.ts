@@ -22,6 +22,16 @@ export type MemberBulkActionResponseModel = {
 
 export type MemberBulkActionType = 'Unlock' | 'Approve' | 'Unapprove' | 'Delete';
 
+export type MemberDetailsRequestModel = {
+    memberIds: Array<string>;
+};
+
+export type MemberDetailsResponseModel = {
+    id: string;
+    groups: Array<string>;
+    createDate: string;
+};
+
 export type PostBulkData = {
     body: MemberBulkActionRequestModel;
     path?: never;
@@ -48,3 +58,30 @@ export type PostBulkResponses = {
 };
 
 export type PostBulkResponse = PostBulkResponses[keyof PostBulkResponses];
+
+export type PostDetailsData = {
+    body: MemberDetailsRequestModel;
+    path?: never;
+    query?: never;
+    url: '/umbraco/member-dashboard/api/v1/details';
+};
+
+export type PostDetailsErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * The resource is protected and requires an authentication token
+     */
+    401: unknown;
+};
+
+export type PostDetailsResponses = {
+    /**
+     * OK
+     */
+    200: Array<MemberDetailsResponseModel>;
+};
+
+export type PostDetailsResponse = PostDetailsResponses[keyof PostDetailsResponses];

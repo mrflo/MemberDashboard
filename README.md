@@ -70,7 +70,7 @@ demo/MemberDashboard.Demo/               Umbraco 18 site for development, seeds 
 Requires the .NET 10 SDK and **Node 24+** (see `.nvmrc`).
 
 ```bash
-git clone https://github.com/umbraco-community/MemberDashboard.git
+git clone https://github.com/mrflo/MemberDashboard.git
 cd MemberDashboard
 dotnet build
 dotnet run --project demo/MemberDashboard.Demo

@@ -19,9 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-select with bulk unlock, approve, unapprove and delete. Each runs as a single request to
   `POST /umbraco/member-dashboard/api/v1/bulk` and reports partial failures rather than hiding them.
   Unlock also resets the failed login attempt counter, which the Management API cannot do.
+- A Groups column and a Created column, both backed by
+  `POST /umbraco/member-dashboard/api/v1/details`. The Management API's `filter/member` endpoint
+  returns every member with an empty group list and a default creation date, so these two columns
+  cannot be populated from the listing response alone.
 - A right-hand sidebar panel for editing a member's name, email, username, password, groups and
   approval/lockout/two-factor state, with a link out to the full member workspace.
 - English localization for all user-facing strings.
 
-[Unreleased]: https://github.com/umbraco-community/MemberDashboard/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/umbraco-community/MemberDashboard/releases/tag/v0.1.0
+[Unreleased]: https://github.com/mrflo/MemberDashboard/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/mrflo/MemberDashboard/releases/tag/v0.1.0
