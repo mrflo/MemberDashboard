@@ -1,0 +1,33 @@
+{
+  "$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json",
+  "Title": "Member Dashboard",
+  "Category": "Editor Tools",
+  "AlternateCategory": "Developer Tools",
+  "PackageType": "Package",
+  "LicenseTypes": [
+    "Free"
+  ],
+  "AuthorDetails": {
+    "Url": "https://github.com/mrflo",
+    "ImageUrl": "https://github.com/mrflo.png"
+  },
+  "DocumentationUrl": "https://github.com/mrflo/MemberDashboard#readme",
+  "IssueTrackerUrl": "https://github.com/mrflo/MemberDashboard/issues",
+  "Tags": [
+    "members",
+    "member-management",
+    "backoffice",
+    "dashboard",
+    "bulk-actions"
+  ],
+  "Screenshots": [
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/mrflo/MemberDashboard/main/docs/member-dashboard.png",
+      "Caption": "Filter members by group, approval and lockout status, then act on any selection."
+    },
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/mrflo/MemberDashboard/main/docs/member-dashboard-sidebar.png",
+      "Caption": "Edit a member in a side panel without leaving the list."
+    }
+  ]
+}

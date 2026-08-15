@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-08-15
+
+### Added
+
+- A package icon, which is also what the Umbraco Marketplace uses as the listing image.
+- `umbraco-marketplace.json`, setting the Marketplace category, screenshots and links.
+
 ## [0.1.0] - 2026-08-15
 
 ### Added
@@ -27,5 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   approval/lockout/two-factor state, with a link out to the full member workspace.
 - English localization for all user-facing strings.
 
-[Unreleased]: https://github.com/mrflo/MemberDashboard/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/mrflo/MemberDashboard/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/mrflo/MemberDashboard/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/mrflo/MemberDashboard/releases/tag/v0.1.0

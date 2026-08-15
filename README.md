@@ -1,4 +1,6 @@
-# Member Dashboard for Umbraco
+![Member Dashboard](https://raw.githubusercontent.com/mrflo/MemberDashboard/main/docs/icon.png)
+
+# Member Dashboard for Umbraco V18+
 
 [![NuGet](https://img.shields.io/nuget/v/Umbraco.Community.MemberDashboard.svg)](https://www.nuget.org/packages/Umbraco.Community.MemberDashboard)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)

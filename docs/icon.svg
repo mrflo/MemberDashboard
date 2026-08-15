@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="112" fill="#2F327D"/>
+
+  <!-- Three member rows: avatar dot + name bar. Bars vary in length so the mark reads as a
+       list of people rather than a generic stack of lines. -->
+  <g fill="#FFFFFF">
+    <circle cx="146" cy="160" r="30"/>
+    <rect x="196" y="144" width="180" height="32" rx="16"/>
+
+    <circle cx="146" cy="256" r="30"/>
+    <!-- Stops short of the badge so it keeps its rounded cap instead of being sliced by the
+         knockout ring. -->
+    <rect x="196" y="240" width="98" height="32" rx="16"/>
+
+    <circle cx="146" cy="352" r="30"/>
+    <rect x="196" y="336" width="158" height="32" rx="16"/>
+  </g>
+
+  <!-- Check badge on the middle row. The ring is knocked out of the row beneath it so the badge
+       stays legible when the mark is scaled down to 32px. -->
+  <circle cx="372" cy="256" r="62" fill="#2F327D"/>
+  <circle cx="372" cy="256" r="46" fill="#34C77B"/>
+  <path d="M351 256l14 15 28-31" fill="none" stroke="#FFFFFF" stroke-width="14"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
