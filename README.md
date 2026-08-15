@@ -6,7 +6,7 @@
 A backoffice dashboard for managing an Umbraco member base at scale.
 
 ![The Member Dashboard listing members with group, status, last login and created columns, above filters for group, approval and lockout](https://raw.githubusercontent.com/mrflo/MemberDashboard/main/docs/member-dashboard.png)
-
+![The Member Dashboard sidebar to quickly edit a member or link to the full Umbraco member edit](https://raw.githubusercontent.com/mrflo/MemberDashboard/main/docs/member-dashboard-sidebar.png)
 Umbraco 18 ships a Members section with a tree and a per-member editor, but no way to *manage* members
 in bulk. There is no group filter, no approval or lockout filter, and no multi-select. Unlocking forty
 members after a brute-force lockout means opening forty members.

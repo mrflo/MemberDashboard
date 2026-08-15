@@ -262,13 +262,13 @@ export class UmbMemberDashboardEditModalElement extends UmbModalBaseElement<
           ></uui-button>`
         : nothing}
       <uui-button
-        label=${this.localize.term("general_cancel")}
+          label=${this.localize.term("general_cancel")}
         @click=${this.#onCancel}
       ></uui-button>
       <uui-button
         look="primary"
         color="positive"
-        label=${this.localize.term("general_save")}
+        label=${this.localize.term("buttons_save")}
         ?disabled=${this._loading || this._loadFailed || this._saving}
         .state=${this._saving ? "waiting" : undefined}
         @click=${this.#onSave}
