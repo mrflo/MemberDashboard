@@ -5,8 +5,6 @@
 
 A backoffice dashboard for managing an Umbraco member base at scale.
 
-![The Member Dashboard listing members with group, status, last login and created columns, above filters for group, approval and lockout](https://raw.githubusercontent.com/mrflo/MemberDashboard/main/docs/member-dashboard.png)
-![The Member Dashboard sidebar to quickly edit a member or link to the full Umbraco member edit](https://raw.githubusercontent.com/mrflo/MemberDashboard/main/docs/member-dashboard-sidebar.png)
 Umbraco 18 ships a Members section with a tree and a per-member editor, but no way to *manage* members
 in bulk. There is no group filter, no approval or lockout filter, and no multi-select. Unlocking forty
 members after a brute-force lockout means opening forty members.
@@ -23,6 +21,11 @@ This package adds a Member Dashboard to the Members section:
 
 It is built on Umbraco's own collection framework, so the toolbar, pagination, selection bar, sorting
 and empty states are the standard backoffice components and behave exactly as they do elsewhere.
+
+## Screenshots
+![The Member Dashboard listing members with group, status, last login and created columns, above filters for group, approval and lockout](https://raw.githubusercontent.com/mrflo/MemberDashboard/main/docs/member-dashboard.png)
+![The Member Dashboard sidebar to quickly edit a member or link to the full Umbraco member edit](https://raw.githubusercontent.com/mrflo/MemberDashboard/main/docs/member-dashboard-sidebar.png)
+
 
 ## Requirements
 
@@ -46,7 +49,8 @@ reach the Members section can use the dashboard, and nobody else can.
 
 Reading the member list uses Umbraco's built-in `GET /umbraco/management/api/v1/filter/member`
 endpoint, which already supports group, approval, lockout, ordering and paging parameters — Umbraco's
-own member list simply does not send them. No custom read API is involved.
+own member list simply does not send them. The listing itself needs no custom read API; only the
+Groups and Created columns do, for the reason below.
 
 The package adds two server endpoints, both because the Management API cannot express what the
 dashboard needs.

@@ -60,18 +60,19 @@ demo/MemberDashboard.Demo/             Development site and demo data seeder
 
 ## Things worth knowing before you change things
 
-- **The read path deliberately has no server code.** Umbraco's built-in `filter/member` endpoint
-  already accepts `memberGroupName`, `isApproved`, `isLockedOut`, `orderBy` and `orderDirection`; the
-  core member collection just never sends them. `member-dashboard-collection.server.data-source.ts`
-  is where we do.
+- **The listing itself needs no server code.** Umbraco's built-in `filter/member` endpoint already
+  accepts `memberGroupName`, `isApproved`, `isLockedOut`, `orderBy` and `orderDirection`; the core
+  member collection just never sends them. `member-dashboard-collection.server.data-source.ts` is
+  where we do.
 - **Never use raw `fetch()`** for backoffice APIs — it produces 401s. Use the generated client from
   `src/api`, wrapped in `tryExecute` from `@umbraco-cms/backoffice/resources`.
 - **`src/api` is generated and committed.** Do not hand-edit it. Regenerate with
   `npm run generate-client` against a running demo site, and commit the result so CI and `dotnet build`
   work without a live instance.
-- **A member's `groups` are group keys, not names**, even though the field is typed as `string[]`.
-  The table resolves them via `UmbMemberGroupItemRepository`. The `memberGroupName` *filter*, by
-  contrast, really is a name — they are different spaces.
+- **`filter/member` lies about two fields.** It returns every member with `groups: []` and a
+  `createDate` of `0001-01-01`, whatever is actually stored. Both come from this package's own
+  `POST /details` instead, merged into the item model by the collection data source — so by the time
+  the table sees a member, `groups` holds group *names*, not keys.
 - **Bulk actions post once.** If you add an action, extend `UmbMemberBulkActionBase` and add the
   operation to `MemberBulkActionType` server-side rather than looping over per-member calls.
 - **Prefer the built-in components.** The dashboard extends `UmbCollectionDefaultElement` so the
@@ -86,6 +87,35 @@ demo/MemberDashboard.Demo/             Development site and demo data seeder
 - Run `dotnet build` and `npm run check` before pushing — both must be clean.
 - Describe what you changed and how you verified it in the backoffice.
 - Add an entry to `CHANGELOG.md` under "Unreleased".
+
+## Releasing
+
+Publishing is automated by `.github/workflows/publish.yml` and happens on tag push:
+
+```bash
+# Move the CHANGELOG's "Unreleased" entries under the new version first, then:
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+The workflow packs with `-p:Version` taken from the tag, so the csproj's `<Version>` is not the
+source of truth for a release — the tag is. It can also be run manually from the Actions tab with an
+explicit version.
+
+There is no NuGet API key anywhere. The workflow uses
+[Trusted Publishing](https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing): it
+exchanges a GitHub OIDC token for an API key that is valid for one hour and usable once. Two things
+have to be set up for that to work:
+
+- A **Trusted Publishing policy** on nuget.org (your username → Trusted Publishing), naming
+  Repository Owner `mrflo`, Repository `MemberDashboard`, and Workflow File `publish.yml` — the file
+  name only, not the path. Leave Environment blank.
+- A repository secret **`NUGET_USER`** holding your nuget.org username — the profile name, not your
+  email address.
+
+A newly created policy on a private repository stays provisional for 7 days: if nothing publishes in
+that window it goes inactive, and you restart the window from the same page. The first successful
+publish makes it permanent.
 
 ## Reporting bugs
 

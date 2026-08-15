@@ -1,0 +1,87 @@
+name: Publish to NuGet
+
+# Publishing is driven by tags: `git tag v0.2.0 && git push origin v0.2.0` packs and pushes 0.2.0.
+# The version is taken from the tag rather than the csproj, so the two can never disagree.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish, without the leading v (e.g. 0.2.0)"
+        required: true
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      # Required for Trusted Publishing. Without it GitHub issues no OIDC token and the
+      # NuGet login step fails.
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      # `dotnet pack` builds the TypeScript client via the csproj's BuildClient target, so Node
+      # has to be on PATH. The version comes from .nvmrc so CI and local development agree.
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: src/Umbraco.Community.MemberDashboard/Client/package-lock.json
+
+      - name: Resolve version
+        id: version
+        # The dispatch input is passed through the environment rather than interpolated into the
+        # script, so it cannot be used to inject shell commands.
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          if [ -n "${INPUT_VERSION:-}" ]; then
+            version="${INPUT_VERSION}"
+          else
+            version="${GITHUB_REF_NAME#v}"
+          fi
+
+          if ! printf '%s' "${version}" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::'${version}' is not a valid semantic version."
+            exit 1
+          fi
+
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "Publishing ${version}"
+
+      - name: Pack
+        run: >
+          dotnet pack src/Umbraco.Community.MemberDashboard/Umbraco.Community.MemberDashboard.csproj
+          --configuration Release
+          --output artifacts
+          -p:Version=${{ steps.version.outputs.version }}
+
+      # Exchanges the workflow's OIDC token for a NuGet API key that is valid for one hour and can
+      # be used once. Requires a Trusted Publishing policy on nuget.org naming this repository and
+      # this workflow file — see CONTRIBUTING.md.
+      - name: NuGet login
+        id: login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Push
+        run: >
+          dotnet nuget push artifacts/*.nupkg
+          --api-key ${{ steps.login.outputs.NUGET_API_KEY }}
+          --source https://api.nuget.org/v3/index.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nupkg
+          path: artifacts/*.nupkg
