@@ -12,7 +12,7 @@
     <Title>Member Dashboard for Umbraco</Title>
     <!-- Local default only: a release is packed with -p:Version taken from the git tag. -->
     <Version>0.1.1</Version>
-    <Authors>Umbraco.Community.MemberDashboard contributors</Authors>
+    <Authors>Florent Grandjean</Authors>
     <Description>A backoffice dashboard for managing Umbraco members in bulk: filter by member group and approval/lockout status, sort and page through the whole member base, unlock / approve / unapprove / delete many members at once, and edit a member in a side panel.</Description>
     <PackageTags>umbraco umbraco-marketplace members member-management backoffice dashboard</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
