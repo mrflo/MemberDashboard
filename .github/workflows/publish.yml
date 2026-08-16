@@ -56,8 +56,22 @@ jobs:
             exit 1
           fi
 
+          # The package major mirrors the Umbraco major it is built against: v17/dev ships 17.x,
+          # v18/dev ships 18.x. One package ID serves both lines, so tagging the wrong branch would
+          # publish, say, Umbraco 17 code as 18.x — and NuGet versions cannot be taken back.
+          umbraco_major=$(
+            grep -o 'Include="Umbraco\.Cms\.Api\.Management" Version="[^"]*"' Directory.Packages.props \
+              | grep -oE '[0-9]+' | head -1
+          )
+          tag_major="${version%%.*}"
+
+          if [ "${tag_major}" != "${umbraco_major}" ]; then
+            echo "::error::Version ${version} implies Umbraco ${tag_major}, but this branch builds against Umbraco ${umbraco_major}. Tag the matching branch."
+            exit 1
+          fi
+
           echo "version=${version}" >> "$GITHUB_OUTPUT"
-          echo "Publishing ${version}"
+          echo "Publishing ${version} for Umbraco ${umbraco_major}"
 
       - name: Pack
         run: >

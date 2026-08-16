@@ -37,3 +37,4 @@ demo/**/wwwroot/media/
 ## OS
 .DS_Store
 Thumbs.db
+demo/MemberDashboard.Demo/umbraco/Data-v18/
