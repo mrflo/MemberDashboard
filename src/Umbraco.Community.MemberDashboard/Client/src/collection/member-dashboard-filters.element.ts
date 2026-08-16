@@ -2,6 +2,7 @@ import { css, customElement, html, nothing, state } from "@umbraco-cms/backoffic
 import { UmbLitElement } from "@umbraco-cms/backoffice/lit-element";
 import { UMB_COLLECTION_CONTEXT } from "@umbraco-cms/backoffice/collection";
 import { UmbMemberGroupCollectionRepository } from "@umbraco-cms/backoffice/member-group";
+import { debounce } from "@umbraco-cms/backoffice/utils";
 import type { UmbMemberDashboardCollectionContext } from "./member-dashboard-collection.context.js";
 import type { UmbMemberDashboardCollectionFilterModel } from "./types.js";
 
@@ -10,8 +11,11 @@ type TriState = "" | "true" | "false";
 /**
  * Additional filters for the member dashboard.
  *
- * The free-text filter is the same filter used by Umbraco's
- * built-in collection toolbar.
+ * The free-text field replaces Umbraco's `umb-collection-filter-field` rather than reusing it. That
+ * component exposes no slot, so there is nowhere to hang a clear button, and it holds its own
+ * uncontrolled value — which meant "Clear filters" reset the query on the server while leaving the
+ * typed text sitting in the box. This renders the same `uui-input` with the same 500ms debounce,
+ * and follows the clear-button pattern Umbraco uses in its own search fields.
  */
 @customElement("member-dashboard-filters")
 export class UmbMemberDashboardFiltersElement extends UmbLitElement {
@@ -20,6 +24,9 @@ export class UmbMemberDashboardFiltersElement extends UmbLitElement {
 
   @state()
   private _groupNames: Array<string> = [];
+
+  @state()
+  private _query = "";
 
   @state()
   private _selectedGroup = "";
@@ -41,6 +48,8 @@ export class UmbMemberDashboardFiltersElement extends UmbLitElement {
         (filter) => {
           const current = filter as UmbMemberDashboardCollectionFilterModel;
 
+          // Keeps the box in step with the context, so resetFilter() empties it too.
+          this._query = current.filter ?? "";
           this._selectedGroup = current.memberGroupName ?? "";
           this._approved = toTriState(current.isApproved);
           this._lockedOut = toTriState(current.isLockedOut);
@@ -69,10 +78,28 @@ export class UmbMemberDashboardFiltersElement extends UmbLitElement {
 
   get #hasActiveFilter(): boolean {
     return (
+      !!this._query ||
       !!this._selectedGroup ||
       this._approved !== "" ||
       this._lockedOut !== ""
     );
+  }
+
+  // Same 500ms as Umbraco's own collection filter field, so typing does not fire a request per
+  // keystroke. Unlike that component this goes through applyFilter, which also returns to page 1 —
+  // narrowing the query while on page 5 would otherwise strand you past the end of the results.
+  #debouncedFilter = debounce((query: string) => {
+    this.#collectionContext?.applyFilter({ filter: query || undefined });
+  }, 500);
+
+  #onQueryInput(event: Event) {
+    this._query = (event.target as HTMLInputElement).value ?? "";
+    this.#debouncedFilter(this._query);
+  }
+
+  #onClearQuery() {
+    this._query = "";
+    this.#collectionContext?.applyFilter({ filter: undefined });
   }
 
   #onGroupChange(event: Event) {
@@ -107,13 +134,27 @@ export class UmbMemberDashboardFiltersElement extends UmbLitElement {
     return html`
       <div id="filters">
 
-        <!--
-          Umbraco's built-in collection filter.
-
-          This is intentionally the same component used by the
-          standard collection toolbar rather than a custom uui-input.
-        -->
-        <umb-collection-filter-field></umb-collection-filter-field>
+        <uui-input
+          id="query"
+          label=${this.localize.term("memberDashboard_filterQueryLabel")}
+          placeholder=${this.localize.term("placeholders_filter")}
+          .value=${this._query}
+          @input=${this.#onQueryInput}
+        >
+          ${this._query
+            ? html`
+              <uui-button
+                compact
+                slot="append"
+                type="button"
+                label=${this.localize.term("general_clear")}
+                @click=${this.#onClearQuery}
+              >
+                <uui-icon name="icon-delete" aria-hidden="true"></uui-icon>
+              </uui-button>
+            `
+            : nothing}
+        </uui-input>
 
         <uui-select
           label=${this.localize.term("memberDashboard_filterGroupLabel")}
@@ -202,7 +243,7 @@ export class UmbMemberDashboardFiltersElement extends UmbLitElement {
         flex-wrap: wrap;
       }
 
-      umb-collection-filter-field {
+      #query {
         flex: 1 1 250px;
         min-width: 250px;
       }
