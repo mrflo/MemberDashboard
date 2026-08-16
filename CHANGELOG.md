@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [18.0.1] - 2026-08-17
+
+Released together with 17.0.1, which carries the same fix.
+
+### Fixed
+
+- The package now ships the backoffice client. `wwwroot/App_Plugins` is gitignored, so on a clean
+  checkout — which is what CI packs from — it did not exist when the project was evaluated and the
+  SDK's glob matched nothing. 17.0.0 and 18.0.0 therefore installed as a DLL with no dashboard.
+
 ## [18.0.0] - 2026-08-16
 
 The package major now mirrors the Umbraco major it supports. `18.x` is for Umbraco 18 and `17.x` for
@@ -30,6 +40,10 @@ are superseded and apply to neither.
   leaving the typed text in place, so the UI disagreed with the results.
 - Typing in the filter field returns to page one. Narrowing the query while on a later page asked
   the server to skip past the end of the new result set and showed an empty table.
+
+## [17.0.1] - 2026-08-17
+
+Same fix as 18.0.1, for the Umbraco 17 LTS line.
 
 ## [17.0.0] - 2026-08-16
 
@@ -65,8 +79,10 @@ Swashbuckle, where 18 uses `Microsoft.AspNetCore.OpenApi`. The backoffice client
   approval/lockout/two-factor state, with a link out to the full member workspace.
 - English localization for all user-facing strings.
 
-[Unreleased]: https://github.com/mrflo/MemberDashboard/compare/v18.0.0...HEAD
+[Unreleased]: https://github.com/mrflo/MemberDashboard/compare/v18.0.1...HEAD
+[18.0.1]: https://github.com/mrflo/MemberDashboard/compare/v18.0.0...v18.0.1
 [18.0.0]: https://github.com/mrflo/MemberDashboard/releases/tag/v18.0.0
+[17.0.1]: https://github.com/mrflo/MemberDashboard/compare/v17.0.0...v17.0.1
 [17.0.0]: https://github.com/mrflo/MemberDashboard/releases/tag/v17.0.0
 [0.1.1]: https://github.com/mrflo/MemberDashboard/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/mrflo/MemberDashboard/releases/tag/v0.1.0
