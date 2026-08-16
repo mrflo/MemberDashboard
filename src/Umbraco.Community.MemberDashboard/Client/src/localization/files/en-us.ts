@@ -4,6 +4,7 @@ export default {
     dashboardLabel: "Member Dashboard",
 
     // Filters
+    filterQueryLabel: "Filter members",
     filterGroupLabel: "Member group",
     filterAllGroups: "All groups",
     filterApprovedLabel: "Approval",
