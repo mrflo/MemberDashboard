@@ -90,17 +90,43 @@ demo/MemberDashboard.Demo/             Development site and demo data seeder
 
 ## Releasing
 
+One package ID serves two Umbraco majors, so **the package major mirrors the Umbraco major**:
+
+| Branch | Builds against | Tags | Publishes |
+|---|---|---|---|
+| `v17/dev` | Umbraco 17 LTS | `v17.x.y` | `17.x.y` |
+| `v18/dev` | Umbraco 18 | `v18.x.y` | `18.x.y` |
+
+`main` holds whatever is current for the README and the Marketplace manifest; releases are tagged on
+the dev branches.
+
+Two things keep the two lines from colliding:
+
+- **Bounded dependency ranges.** `Directory.Packages.props` pins the Umbraco packages to
+  `[17.x, 18.0.0)` / `[18.x, 19.0.0)` rather than a bare minimum. An unbounded `18.1.0` means
+  ">= 18.1.0 forever", which would let NuGet install the v18 build on an Umbraco 19 site and would
+  make the Marketplace advertise Umbraco versions that were never tested.
+- **A guard in the workflow.** It reads the Umbraco major out of `Directory.Packages.props` and
+  refuses to publish if it disagrees with the tag. Tagging `v18.0.0` on `v17/dev` fails the build
+  instead of shipping v17 code as 18.x — which could not be undone, since NuGet versions are
+  permanent.
+
 Publishing is automated by `.github/workflows/publish.yml` and happens on tag push:
 
 ```bash
 # Move the CHANGELOG's "Unreleased" entries under the new version first, then:
-git tag v0.2.0
-git push origin v0.2.0
+git checkout v18/dev
+git tag v18.0.0
+git push origin v18.0.0
 ```
 
 The workflow packs with `-p:Version` taken from the tag, so the csproj's `<Version>` is not the
 source of truth for a release — the tag is. It can also be run manually from the Actions tab with an
 explicit version.
+
+A change that applies to both lines is committed on one dev branch and cherry-picked onto the other.
+Keep `Directory.Packages.props` and `Client/package.json` out of such a cherry-pick: those are the
+files that legitimately differ between the two.
 
 There is no NuGet API key anywhere. The workflow uses
 [Trusted Publishing](https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing): it

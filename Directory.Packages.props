@@ -20,10 +20,10 @@
 
   <ItemGroup>
     <!-- Consumed by the extension package -->
-    <PackageVersion Include="Umbraco.Cms.Api.Common" Version="17.6.0" />
-    <PackageVersion Include="Umbraco.Cms.Api.Management" Version="17.6.0" />
-    <PackageVersion Include="Umbraco.Cms.Web.Common" Version="17.6.0" />
-    <PackageVersion Include="Umbraco.Cms.Web.Website" Version="17.6.0" />
+    <PackageVersion Include="Umbraco.Cms.Api.Common" Version="[17.6.0, 18.0.0)" />
+    <PackageVersion Include="Umbraco.Cms.Api.Management" Version="[17.6.0, 18.0.0)" />
+    <PackageVersion Include="Umbraco.Cms.Web.Common" Version="[17.6.0, 18.0.0)" />
+    <PackageVersion Include="Umbraco.Cms.Web.Website" Version="[17.6.0, 18.0.0)" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
   </ItemGroup>
 </Project>
