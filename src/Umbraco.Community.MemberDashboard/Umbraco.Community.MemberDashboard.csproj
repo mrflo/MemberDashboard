@@ -11,7 +11,7 @@
     <Product>Umbraco.Community.MemberDashboard</Product>
     <Title>Member Dashboard for Umbraco</Title>
     <!-- Local default only: a release is packed with -p:Version taken from the git tag. -->
-    <Version>0.1.1</Version>
+    <Version>18.0.1</Version>
     <Authors>Florent Grandjean</Authors>
     <Description>A backoffice dashboard for managing Umbraco members in bulk: filter by member group and approval/lockout status, sort and page through the whole member base, unlock / approve / unapprove / delete many members at once, and edit a member in a side panel.</Description>
     <PackageTags>umbraco umbraco-marketplace members member-management backoffice dashboard</PackageTags>
@@ -84,6 +84,16 @@
     <Exec Command="npm run build" WorkingDirectory="Client" />
     <ItemGroup>
       <_ClientAssetsBuildOutput Include="wwwroot\App_Plugins\**" />
+
+      <!--
+        wwwroot\App_Plugins is gitignored, so on a clean checkout it does not exist when the project
+        is evaluated and the SDK's wwwroot glob matches nothing. npm writes the files a moment later,
+        but by then nothing is collecting them, and the package ships as a DLL with no backoffice
+        client. Registering them here - after npm has run, before AssignTargetPaths - is what puts
+        them in the static web assets and the nupkg. A warm tree, where the glob already matched
+        them, is covered by Exclude so they are not added twice.
+      -->
+      <Content Include="@(_ClientAssetsBuildOutput)" Exclude="@(Content)" />
     </ItemGroup>
     <WriteLinesToFile File="$(IntermediateOutputPath)client.complete.txt" Lines="@(_ClientAssetsBuildOutput)" Overwrite="true" />
   </Target>
