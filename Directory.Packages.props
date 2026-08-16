@@ -13,17 +13,17 @@
 
   <ItemGroup>
     <!-- Consumed by the demo site -->
-    <PackageVersion Include="Umbraco.Cms" Version="18.1.0" />
-    <PackageVersion Include="Umbraco.Cms.DevelopmentMode.Backoffice" Version="18.1.0" />
+    <PackageVersion Include="Umbraco.Cms" Version="17.6.0" />
+    <PackageVersion Include="Umbraco.Cms.DevelopmentMode.Backoffice" Version="17.6.0" />
     <PackageVersion Include="Microsoft.ICU.ICU4C.Runtime" Version="$(UmbracoAppLocalIcuVersion)" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- Consumed by the extension package -->
-    <PackageVersion Include="Umbraco.Cms.Api.Common" Version="18.1.0" />
-    <PackageVersion Include="Umbraco.Cms.Api.Management" Version="18.1.0" />
-    <PackageVersion Include="Umbraco.Cms.Web.Common" Version="18.1.0" />
-    <PackageVersion Include="Umbraco.Cms.Web.Website" Version="18.1.0" />
+    <PackageVersion Include="Umbraco.Cms.Api.Common" Version="17.6.0" />
+    <PackageVersion Include="Umbraco.Cms.Api.Management" Version="17.6.0" />
+    <PackageVersion Include="Umbraco.Cms.Web.Common" Version="17.6.0" />
+    <PackageVersion Include="Umbraco.Cms.Web.Website" Version="17.6.0" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
   </ItemGroup>
 </Project>
