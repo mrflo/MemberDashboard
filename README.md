@@ -1,13 +1,13 @@
 ![Member Dashboard](https://raw.githubusercontent.com/mrflo/MemberDashboard/main/docs/icon.png)
 
-# Member Dashboard for Umbraco V18+
+# Member Dashboard for Umbraco 17 & 18
 
 [![NuGet](https://img.shields.io/nuget/v/Umbraco.Community.MemberDashboard.svg)](https://www.nuget.org/packages/Umbraco.Community.MemberDashboard)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 A backoffice dashboard for managing an Umbraco member base at scale.
 
-Umbraco 18 ships a Members section with a tree and a per-member editor, but no way to *manage* members
+Umbraco ships a Members section with a tree and a per-member editor, but no way to *manage* members
 in bulk. There is no group filter, no approval or lockout filter, and no multi-select. Unlocking forty
 members after a brute-force lockout means opening forty members.
 
@@ -31,16 +31,29 @@ and empty states are the standard backoffice components and behave exactly as th
 
 ## Requirements
 
-| | |
-|---|---|
-| Umbraco | 18.x |
-| .NET | 10.0 |
+The package major mirrors the Umbraco major it supports, so there is one line per Umbraco version:
+
+| Umbraco | Package version | .NET |
+|---|---|---|
+| 18 | `18.x` | 10.0 |
+| 17 (LTS) | `17.x` | 10.0 |
+
+Both lines carry the same features and are released together.
 
 ## Installation
 
 ```bash
-dotnet add package Umbraco.Community.MemberDashboard
+# Umbraco 18
+dotnet add package Umbraco.Community.MemberDashboard --version "18.*"
+
+# Umbraco 17 LTS
+dotnet add package Umbraco.Community.MemberDashboard --version "17.*"
 ```
+
+Pin the major, because plain `dotnet add package` resolves to the highest version published — which
+is the wrong line if you are on Umbraco 17. Each build also declares a bounded Umbraco dependency
+(`[17.6.0, 18.0.0)` / `[18.1.0, 19.0.0)`), so NuGet refuses the mismatched pairing outright rather
+than installing something untested.
 
 That is all — the dashboard registers itself. Open the **Members** section and it is the first tab.
 
