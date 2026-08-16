@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [18.0.0] - 2026-08-16
+
+The package major now mirrors the Umbraco major it supports. `18.x` is for Umbraco 18 and `17.x` for
+Umbraco 17 LTS; both lines carry the same features and are released together. The `0.1.x` versions
+are superseded and apply to neither.
+
+### Added
+
+- A clear button in the member filter field, following the pattern Umbraco uses in its own search
+  fields. The field is now rendered directly rather than through `umb-collection-filter-field`,
+  which exposes no slot to put one in.
+
+### Changed
+
+- The Umbraco dependency is bounded to `[18.1.0, 19.0.0)` instead of an open-ended minimum, so NuGet
+  will not pair this build with an Umbraco major it was never tested against.
+
+### Fixed
+
+- "Clear filters" now empties the filter text box. It previously reset the query on the server while
+  leaving the typed text in place, so the UI disagreed with the results.
+- Typing in the filter field returns to page one. Narrowing the query while on a later page asked
+  the server to skip past the end of the new result set and showed an empty table.
+
+## [17.0.0] - 2026-08-16
+
+First release for Umbraco 17 LTS, with the same feature set as 18.0.0.
+
+Only one file differs from the Umbraco 18 build: Umbraco 17 generates its OpenAPI document with
+Swashbuckle, where 18 uses `Microsoft.AspNetCore.OpenApi`. The backoffice client is identical.
+
 ## [0.1.1] - 2026-08-15
 
 ### Added
@@ -34,6 +65,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   approval/lockout/two-factor state, with a link out to the full member workspace.
 - English localization for all user-facing strings.
 
-[Unreleased]: https://github.com/mrflo/MemberDashboard/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/mrflo/MemberDashboard/compare/v18.0.0...HEAD
+[18.0.0]: https://github.com/mrflo/MemberDashboard/releases/tag/v18.0.0
+[17.0.0]: https://github.com/mrflo/MemberDashboard/releases/tag/v17.0.0
 [0.1.1]: https://github.com/mrflo/MemberDashboard/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/mrflo/MemberDashboard/releases/tag/v0.1.0
